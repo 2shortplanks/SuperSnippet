@@ -1,0 +1,6 @@
+[
+	{
+	   "keys": ["tab"],
+	   "command": "super_snippet"
+	}
+]
