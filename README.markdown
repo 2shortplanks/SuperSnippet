@@ -5,7 +5,7 @@ This is Super Snippet, a plugin for [Sublime Text 2][subl] that gives
 you an alternative snippet syntax.
 
    * Ability to use ${! ... !} to embed python code in your snippets
-   * Ability to use ${` ... `} to embed shell commands
+   * Ability to use ${\` ... \`} to embed shell commands
 
 Usage
 -----
