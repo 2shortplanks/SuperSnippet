@@ -1,6 +1,9 @@
-import sublime, sublime_plugin, os
+import sublime, sublime_plugin, os, re
+
+a_to_z = re.compile("^[A-Za-z_-]*$")
 
 class SuperSnippetCommand(sublime_plugin.TextCommand):
+
 
 	# the delimiters
 	def start_cmd(self):    return "${`"
@@ -52,8 +55,24 @@ class SuperSnippetCommand(sublime_plugin.TextCommand):
 		# is this in our settings file?  This should be in your User dir
 		# and look like { "shorttext": "expanded texmplate", ... }
 		settings = sublime.load_settings("SuperSnippet.sublime-settings")
-		if (not settings.has(word)): return
-		template = settings.get(word)
+		if (settings.has(word)):
+			template = settings.get(word)
+		else:
+			# look for a file that is named after the snippet in the
+			# User directory.  we will only do this if the snippet has an
+			# ascii A-Za-z short form
+			if (a_to_z.match(word)):
+			    path = os.path.join(sublime.packages_path(),"User","%s.sublime-supersnippet" % word)
+			    if not os.path.isfile(path):
+			        return
+			    try:
+			    	template = open(path,"r").read()
+			    except IOError as e:
+			    	sublime.error_message("Problem reading file %s: %s" % (path, e))
+			    	return
+			else:
+				return
+
 
 		# remove the current word
 		self.view.erase(edit,self.view.word(self.view.sel()[0]))
