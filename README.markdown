@@ -18,17 +18,17 @@ following expansion.  In order the expansions go:
 Usage
 -----
 
-Create a `SuperSnippet.sublime-settings` file in
-`~/Library/Application Support/Sublime Text 2/Packages/User`.  The format
+To add new snippets create a `SuperSnippet.sublime-settings` file in your 
+`Packages/User` directory.  The format
 of this file is a simple JSON object where the keys are the short text
-to expand and the values are.
+to expand and the values are templates for the expansion.
 
 In other words, on Mac OS X create `~/Library/Application Support/Sublime Text 2/Packages/User/SuperSnippet.sublime-settings` that looks something like this:
 
 ```javascript
 {
 	"uuid": "Our chosen unique string for now is: ${`uuidgen`}",
-	"cc": "Character Count: ${! self.view.size() !}"
+	"cc": "Character Count: ${! self.view.size() !}",
 }
 ```
 
@@ -47,7 +47,7 @@ Then create the `SuperSnippet.sublime-settings` file as described above.
 
 To update
 
-	  cd ~/Library/Application Support/Sublime Text 2/Packages/User
-	  git pull
+	cd ~/Library/Application Support/Sublime Text 2/Packages/User
+	git pull
 
 [subl]: http://www.sublimetext.com/2
