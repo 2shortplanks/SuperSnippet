@@ -42,4 +42,4 @@ To update
 	  cd ~/Library/Application Support/Sublime Text 2/Packages/User
 	  git pull
 
-[subl] http://www.sublimetext.com/2
+[subl]: http://www.sublimetext.com/2
