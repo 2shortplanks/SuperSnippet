@@ -2,10 +2,18 @@ Super Snippet
 -------------
 
 This is Super Snippet, a plugin for [Sublime Text 2][subl] that gives
-you an alternative snippet syntax.
+you an extended snippet syntax.  In particular in *addition* to the 
+standard syntax you get:
 
    * Ability to use ${! ... !} to embed python code in your snippets
    * Ability to use ${\` ... \`} to embed shell commands
+
+Note that these *chain*, so that each expansion can create syntax for the
+following expansion.  In order the expansions go:
+
+   * Embedded python code is evaluated and replaced with the output
+   * Embeed shell commands are evalued and replaced with the output
+   * Standard Sublime Text 2 snippet expansion occurs
 
 Usage
 -----
