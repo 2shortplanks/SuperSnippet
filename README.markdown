@@ -12,7 +12,7 @@ Note that these *chain*, so that each expansion can create syntax for the
 following expansion.  In order the expansions go:
 
    * Embedded python code is evaluated and replaced with the output
-   * Embeed shell commands are evalued and replaced with the output
+   * Embedded shell commands are evalued and replaced with the output
    * Standard Sublime Text 2 snippet expansion occurs
 
 Usage
