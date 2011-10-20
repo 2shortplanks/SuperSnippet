@@ -1,6 +1,10 @@
 [
 	{
-	   "keys": ["tab"],
-	   "command": "super_snippet"
+		"keys": ["tab"],
+		"command": "super_snippet"
+	},
+	{
+		"keys": ["ctrl+alt+super+s"],
+		"command": "show_super_snippet"
 	}
 ]

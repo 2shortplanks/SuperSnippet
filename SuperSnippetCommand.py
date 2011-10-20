@@ -1,6 +1,6 @@
 import sublime, sublime_plugin, os, re
 
-a_to_z = re.compile("^[A-Za-z_-]*$")
+a_to_z = re.compile("^[A-Za-z0-9_-]*$")
 
 class SuperSnippetCommand(sublime_plugin.TextCommand):
 
