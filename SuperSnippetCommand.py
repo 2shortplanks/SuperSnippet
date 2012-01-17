@@ -1,4 +1,4 @@
-import sublime, sublime_plugin, os, re
+import sublime, sublime_plugin, os, re, tempfile
 from subprocess import Popen, PIPE
 
 a_to_z = re.compile("^[A-Za-z0-9_-]*$")
@@ -57,8 +57,23 @@ class SuperSnippetCommand(sublime_plugin.TextCommand):
 		# to match the tab size of the document. See also TM_SOFT_TABS.
 		env['TM_TAB_SIZE'] = str(self.view.settings().get("tab_size"))
 
+		# write the entire buffer out to a temp file
+		buffer_file = tempfile.NamedTemporaryFile();
+		env['TM_BUFFER_FILEPATH'] = buffer_file.name;
+		size = self.view.size();
+		chunk = 1024
+		start_pos = 0
+
+		while start_pos < size:
+			text = self.view.substr( sublime.Region(start_pos, start_pos + chunk) )
+			buffer_file.write(text)
+			start_pos = start_pos + chunk
+		buffer_file.flush()
+
 		p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, env=env, close_fds=True)
-		return (p.stdout.read() + p.stderr.read()).rstrip("\n\r")
+		result = (p.stdout.read() + p.stderr.read()).rstrip("\n\r");
+
+		return result;
 
 	# TODO: Handle \ to esxape input.  This probably will mean we
 	# need to recode to do a character by character scan
