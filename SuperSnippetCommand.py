@@ -12,7 +12,52 @@ class SuperSnippetCommand(sublime_plugin.TextCommand):
 	def end_python(self):   return "!}"
 
 	def run_shell_command(self, cmd):
-		p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=True)
+		env = os.environ.copy();
+
+		# textual content of the current line.
+		env['TM_CURRENT_LINE'] = self.current_line()
+
+		# the word in which the caret is located.
+		env['TM_CURRENT_WORD'] = self.current_word()
+
+		if (self.view.file_name()):
+			# the folder of the current document (may not be set).
+			env['TM_DIRECTORY'] = os.path.dirname(self.view.file_name())
+
+			# path (including file name) for the current document (may not be set).
+			env['TM_FILEPATH'] = self.view.file_name()
+
+		# the index in the current line which marks the caret's location. This index is zero-based and takes
+		# the utf-8 encoding of the line (e.g. read as TM_CURRENT_LINE) into account. So to split a line into
+		# what is to the left and right of the caret you could do:
+		# echo "Left:  ${TM_CURRENT_LINE:0:TM_LINE_INDEX}"
+		# echo "Right: ${TM_CURRENT_LINE:TM_LINE_INDEX}"
+		(row, col) = self.view.rowcol(self.view.sel()[0].end())
+		env['TM_LINE_INDEX'] = str(col)
+
+		# the carets line position (counting from 1). For example if you need to work
+		# with the part of the document above the caret you can set the commands input to "Entire Document"
+		# and use the following to cut off the part below and including the current line:
+		#   head -n$((TM_LINE_NUMBER-1))
+		env['TM_LINE_NUMBER'] = str(row + 1)
+
+		# the scope that the caret is inside. See scope selectors for information about scopes.
+		# TODO TM_SCOPE
+
+		# this will have the value YES if the user has enabled soft tabs, otherwise it has the value NO.
+		# This is useful when a shell command generates an indented result and wants to match the users
+		# preferences with respect to tabs versus spaces for the indent.
+		if (self.view.settings().get("translate_tabs_to_spaces")):
+			env['TM_SOFT_TABS'] = "YES"
+		else:
+			env['TM_SOFT_TABS'] = "NO"
+
+		# the tab size as shown in the status bar. This is useful when creating commands which need to present
+		# the current document in another form (Tidy, convert to HTML or similar) or generate a result which needs
+		# to match the tab size of the document. See also TM_SOFT_TABS.
+		env['TM_TAB_SIZE'] = str(self.view.settings().get("tab_size"))
+
+		p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, env=env, close_fds=True)
 		return (p.stdout.read() + p.stderr.read()).rstrip("\n\r")
 
 	# TODO: Handle \ to esxape input.  This probably will mean we
@@ -50,6 +95,9 @@ class SuperSnippetCommand(sublime_plugin.TextCommand):
 	# TODO: Make this more snippet like
 	def current_word(self):
 		return self.view.substr(self.view.word(self.view.sel()[0].end()));
+
+	def current_line(self):
+		return self.view.substr(self.view.line(self.view.sel()[0].end()));
 
 	def insert_super_snippet(self, edit):
 		# okay, what's the current word we're looking at?
