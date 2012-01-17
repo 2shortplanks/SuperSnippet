@@ -1,15 +1,19 @@
 import sublime, sublime_plugin, os, re
+from subprocess import Popen, PIPE
 
 a_to_z = re.compile("^[A-Za-z0-9_-]*$")
 
 class SuperSnippetCommand(sublime_plugin.TextCommand):
-
 
 	# the delimiters
 	def start_cmd(self):    return "${`"
 	def end_cmd(self):      return "`}"
 	def start_python(self): return "${!"
 	def end_python(self):   return "!}"
+
+	def run_shell_command(self, cmd):
+		p = Popen("ls /asdsds", shell=True, stdout=PIPE, stderr=PIPE, close_fds=True)
+		return (p.stdout.read() + p.stderr.read()).rstrip("\n\r")
 
 	# TODO: Handle \ to esxape input.  This probably will mean we
 	# need to recode to do a character by character scan
@@ -36,7 +40,7 @@ class SuperSnippetCommand(sublime_plugin.TextCommand):
 
 	def convert_template_into_snippet(self, template):
 		# first we run all python blocks.  Note that this can return shell commands and snippet expansion
-		template = self.process_template_with(template, self.start_cmd(), self.end_cmd(),lambda x:os.popen(x).read())
+		template = self.process_template_with(template, self.start_cmd(), self.end_cmd(),lambda x:self.run_shell_command(x))
 
 		# Then we run all shell commands.  Note that this can return snippet expansion
 		template = self.process_template_with(template, self.start_python(), self.end_python(), lambda x: str(eval(x)))
