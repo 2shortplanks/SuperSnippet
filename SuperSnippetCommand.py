@@ -12,7 +12,7 @@ class SuperSnippetCommand(sublime_plugin.TextCommand):
 	def end_python(self):   return "!}"
 
 	def run_shell_command(self, cmd):
-		p = Popen("ls /asdsds", shell=True, stdout=PIPE, stderr=PIPE, close_fds=True)
+		p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=True)
 		return (p.stdout.read() + p.stderr.read()).rstrip("\n\r")
 
 	# TODO: Handle \ to esxape input.  This probably will mean we
